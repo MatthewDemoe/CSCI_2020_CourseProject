@@ -3,12 +3,54 @@
  */
 package CSCI.Final.Poject;
 
-public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+public class App extends Application 
+{
+    @Override
+    public void start(Stage primaryStage)
+    {
+        GridPane pane = new GridPane();
+        pane.setHgap(25);
+        pane.setVgap(25);
+        pane.setAlignment(Pos.CENTER);
+
+        Button startButton = new Button("Start");
+        Button scoresButton = new Button("High Scores");
+        Button exitButton = new Button("Exit");
+        
+        pane.add(startButton, 0, 0);
+        pane.add(scoresButton, 0, 1);
+        pane.add(exitButton, 0, 2);
+
+        startButton.setOnAction(e -> {
+            //Start Main Game
+            //rand.start(primaryStage);            
+        });
+
+        scoresButton.setOnAction(e -> {
+            //Show list of High scores
+            //calc.start(primaryStage);
+        });
+
+        exitButton.setOnAction(e -> {
+            //Exit app
+            Platform.exit();
+        });
+
+        Scene scene = new Scene(pane, 800, 600);
+        primaryStage.setTitle("Teen Galaga"); // Set the stage title
+        primaryStage.setScene(scene); // Place the scene in the stage
+        primaryStage.show(); // Display the stage
+    }
+    public static void main(String[] args) 
+    {
+        launch(args);
     }
 }
