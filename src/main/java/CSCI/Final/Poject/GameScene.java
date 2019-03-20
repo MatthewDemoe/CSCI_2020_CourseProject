@@ -17,7 +17,7 @@ import java.net.*;
 
 import main.java.CSCI.Final.Poject.Player;
 
-public class GameScene extends Application 
+public class GameScene extends Application
 {
     // IO streams
     DataOutputStream toServer = null;
@@ -26,6 +26,9 @@ public class GameScene extends Application
 
     private Player player;
     private Player player2;
+    private int kills;
+    private int deaths;
+    private int highScores[5][5];
 
     private int playerNum = 0;
 
@@ -34,16 +37,16 @@ public class GameScene extends Application
         try {
             // 3. Create a socket to connect to the server
               socket = new Socket("localhost", 8000);
-      
+
             // 4. Create an input stream to receive data from the server
               fromServer = new DataInputStream(socket.getInputStream());
-      
+
             // 5. Create an output stream to send data to the server
               toServer = new DataOutputStream(socket.getOutputStream());
 
               playerNum = fromServer.readInt();
               System.out.println(playerNum);
-      
+
           }
           catch (IOException ex) {
             //ta.appendText(ex.toString() + '\n');
@@ -60,8 +63,8 @@ public class GameScene extends Application
         player = new Player(100.0, 100.0, pane);
         player2 = new Player(500.0, 500.0, pane);
 
-        Scene scene = new Scene(pane, 1600, 900); 
-        
+        Scene scene = new Scene(pane, 1600, 900);
+
         GetInput(scene);
 
         new Thread(() -> {
@@ -70,22 +73,22 @@ public class GameScene extends Application
                 try {
                     // Get the radius from the text field
                     //String test = "Memes";
-                    
+
                     //System.out.println(test);
-              
+
                     // 1. Send the radius to the server
-            
-                    //toServer.writeUTF(test);       
-                   
+
+                    //toServer.writeUTF(test);
+
                     //toServer.flush();
-              
-                    // 2. Get area from the server            
+
+                    // 2. Get area from the server
                     String serverIn = fromServer.readUTF();
                     HandleServerInput(serverIn);
 
-                    //System.out.println(serverIn);          
-            
-              
+                    //System.out.println(serverIn);
+
+
                     // Display to the text area
                     /*ta.appendText("Radius is " + radius + "\n");
                     ta.appendText("Area received from the server is " + area + '\n');*/
@@ -104,14 +107,14 @@ public class GameScene extends Application
                     @Override
                     public void run(){
                         //System.out.println("Memes");
-                        
+
                     }
                 };
 
                 while(true){
                     try{
                         Thread.sleep(10);
-                    }catch(InterruptedException ex){                        
+                    }catch(InterruptedException ex){
                     }
 
                     Platform.runLater(updater);
@@ -124,17 +127,17 @@ public class GameScene extends Application
 
         primaryStage.setTitle("Teen Galaga"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
-        primaryStage.show(); // Display the stage              
+        primaryStage.show(); // Display the stage
     }
 
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         launch(args);
     }
 
     private void GetInput(Scene scene)
     {
-        
+
         scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
             @Override
             public void handle(KeyEvent event){
@@ -145,20 +148,20 @@ public class GameScene extends Application
                        case W:
                            toServer.writeChar('W');
                            break;
-                       
+
                        case S:
                            toServer.writeChar('S');
                            break;
-   
-                       case A:          
+
+                       case A:
                            toServer.writeChar('A');
                            break;
-   
-                       case D:            
+
+                       case D:
                            toServer.writeChar('D');
                            break;
                    }
-                   
+
                }
                catch (IOException ex) {
                 System.err.println(ex);
@@ -192,7 +195,7 @@ public class GameScene extends Application
                         player2.Move(new Vec2(0.0, -100.0));
 
                     break;
-                       
+
                 case 'S':
                     if(currentPlayer == 1)
                         player.Move(new Vec2(0.0, 100.0));
@@ -200,7 +203,7 @@ public class GameScene extends Application
                     if(currentPlayer == 2)
                         player2.Move(new Vec2(0.0, 100.0));
                    break;
- 
+
                 case 'A':
                     if(currentPlayer == 1)
                         player.Move(new Vec2(-100.0, 0.0));
@@ -208,7 +211,7 @@ public class GameScene extends Application
                     if(currentPlayer == 2)
                         player2.Move(new Vec2(-100.0, 0.0));
                     break;
-   
+
                 case 'D':
                     if(currentPlayer == 1)
                         player.Move(new Vec2(100.0, 0.0));
@@ -217,6 +220,58 @@ public class GameScene extends Application
                         player2.Move(new Vec2(100.0, 0.0));
                     break;
             }
+        }
+    }
+
+    public void save() {
+        File f = new File(currentFileName);
+
+        try {
+
+            PrintWriter p = new PrintWriter(f);
+
+            for(int i = 0;i < l.size();i++) {
+              if (kills >= highScores[i][0])
+              {
+                if (deaths <= highScores[i][1])
+                {
+                  if (i + 1 < 5)
+                  {
+                    highScores[i+1][0] = highScores[i][0];
+                    highScores[i+1][1] = highScores[i][1];
+                  }
+                  highScores[i][0] = kills;
+                  highScores[i][1] = deaths;
+                }
+              }
+                p.println(kills + "," + deaths);
+            }
+
+            p.flush();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void load() {
+
+
+
+        try {
+            Scanner in = new Scanner(new File(currentFileName));
+            int i = 0;
+            while(in.hasNextLine()) {
+                String[] str = in.nextLine().split(",");
+                highScores[i][0] = str[0];
+                highScores[i][1] = str[1];
+                i++;
+            }
+
+            in.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }
