@@ -10,6 +10,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
+import main.java.CSCI.Final.Poject.GameScene;
+import main.java.CSCI.Final.Poject.Server;
 
 public class App extends Application 
 {
@@ -22,16 +27,28 @@ public class App extends Application
         pane.setAlignment(Pos.CENTER);
 
         Button startButton = new Button("Start");
+        Button serverButton = new Button("Host Server");
         Button scoresButton = new Button("High Scores");
         Button exitButton = new Button("Exit");
         
         pane.add(startButton, 0, 0);
-        pane.add(scoresButton, 0, 1);
-        pane.add(exitButton, 0, 2);
+        pane.add(serverButton, 0, 1);
+        pane.add(scoresButton, 0, 2);
+        pane.add(exitButton, 0, 3);
+
+        //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        GameScene game = new GameScene();
+        Server server = new Server();
+
 
         startButton.setOnAction(e -> {
             //Start Main Game
-            //rand.start(primaryStage);            
+            game.start(primaryStage);         
+        });
+
+        serverButton.setOnAction(e -> {
+            server.start(primaryStage);
         });
 
         scoresButton.setOnAction(e -> {
@@ -44,13 +61,15 @@ public class App extends Application
             Platform.exit();
         });
 
-        Scene scene = new Scene(pane, 800, 600);
-        primaryStage.setTitle("Teen Galaga"); // Set the stage title
+        Scene scene = new Scene(pane, 1600, 900);
+        primaryStage.setTitle("Teen Galaga Title"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
     }
+
     public static void main(String[] args) 
     {
         launch(args);
+
     }
 }
