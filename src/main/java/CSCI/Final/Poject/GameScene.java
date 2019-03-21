@@ -30,6 +30,7 @@ public class GameScene extends Application
     private Player player;
     private Player player2;
     private Vector<Player> players;
+    private Vector<Projectile> projectiles;
 
     private int playerNum = 0;
 
@@ -61,22 +62,25 @@ public class GameScene extends Application
             //ta.appendText(ex.toString() + '\n');
           }
 
-
         Pane pane = new Pane();
 
-        player = new Player(100.0, 100.0, pane);
-        player2 = new Player(500.0, 500.0, pane);
-
         players = new Vector<Player>();
+        projectiles = new Vector<Projectile>();
 
         if(playerNum == 1)
         {
+            player = new Player(1, 100.0, 100.0, pane);
+            player2 = new Player(2, 500.0, 500.0, pane);
+
             player.SetColor(Color.BLUE);
             player2.SetColor(Color.RED);
         }
 
         else
         {
+            player = new Player(2, 100.0, 100.0, pane);
+            player2 = new Player(1, 500.0, 500.0, pane);
+
             player.SetColor(Color.RED);
             player2.SetColor(Color.BLUE);
         }
@@ -94,14 +98,37 @@ public class GameScene extends Application
                 try {  
                     String serverIn = fromServer.readUTF();
                     HandleServerInput(serverIn);
-
-                    //Why do I have to do this?
+                    
+                    //JavaFX :)
                     Platform.runLater(() -> {
+
+                        for(int j = 0; j < projectiles.size(); j++)
+                        {
+                            projectiles.get(j).Update();
+
+                            for(int i = 0; i < players.size(); i++)
+                            {
+                                if(players.get(i).GetPlayerNum() != projectiles.get(j).GetPlayerNum())
+                                {
+                                    if(projectiles.get(j).CheckCollision(players.get(i)))
+                                    {
+                                        projectiles.removeElementAt(j);
+                                        break;
+                                    }
+
+                                }
+    
+                            }
+                        }
+
                         //Update all players
                         for(int i = 0; i < players.size(); i++)
                         {
                             players.get(i).Update();
+
                         }
+
+
                     }); 
 
                   }
@@ -162,7 +189,6 @@ public class GameScene extends Application
               }
             }
         });
-
         
         scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
             @Override
@@ -190,8 +216,7 @@ public class GameScene extends Application
                         case SPACE:
                            toServer.writeChar('x');
                            break; 
-                   }
-                   
+                   }                   
                }
                catch (IOException ex) {
                 System.err.println(ex);
@@ -202,10 +227,13 @@ public class GameScene extends Application
 
     private void HandleServerInput(String in)
     {
+        //I am creating projectile to add to the scene, so javaFX is making me do this
+        Platform.runLater(() -> {
         int currentPlayer = 0;
 
         for(int i = 0; i < in.length(); i++)
         {
+
             switch(in.charAt(i))
             {
                 case '0':
@@ -218,15 +246,13 @@ public class GameScene extends Application
 
                 case 'W':
                     players.get(currentPlayer).SetKey(KeyCode.W, true);
-
                     break;
                        
                 case 'S':
                     players.get(currentPlayer).SetKey(KeyCode.S, true);
                    break;
  
-                case 'A':
-                    
+                case 'A':                    
                     players.get(currentPlayer).SetKey(KeyCode.A, true);
                     break;
    
@@ -234,24 +260,29 @@ public class GameScene extends Application
                     players.get(currentPlayer).SetKey(KeyCode.D, true);
                     break;
 
+                case 'X':
+                    projectiles.add(players.get(currentPlayer).FireProjectile());
+                    break;
+
                 case 'w':
                     players.get(currentPlayer).SetKey(KeyCode.W, false);
-
                     break;
                        
                 case 's':
                     players.get(currentPlayer).SetKey(KeyCode.S, false);
                    break;
  
-                case 'a':
-                    
+                case 'a':                    
                     players.get(currentPlayer).SetKey(KeyCode.A, false);
                     break;
    
                 case 'd':
                     players.get(currentPlayer).SetKey(KeyCode.D, false);
                     break;
+
+                case 'x':
+                    break;
             }
-        }
+        }});
     }
 }

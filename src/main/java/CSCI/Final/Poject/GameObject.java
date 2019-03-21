@@ -49,6 +49,11 @@ public abstract class GameObject
 
     }
 
+    public Double GetSize()
+    {
+        return size;
+    }
+
     public void SetColor(Color c)
     {
         for(int i = 0; i < components.size(); i++)
@@ -63,5 +68,5 @@ public abstract class GameObject
     protected Double size;
     protected Vec2 _velocity;
 
-    Pane _pane;
+    protected Pane _pane;
 }

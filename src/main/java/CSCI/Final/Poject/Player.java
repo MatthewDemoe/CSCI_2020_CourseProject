@@ -2,6 +2,7 @@ package main.java.CSCI.Final.Poject;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 
 
 public class Player extends GameObject
@@ -9,6 +10,7 @@ public class Player extends GameObject
     Line topLeft;
     Line topRight;
     Line bottom;
+
     boolean keyStates[];
     Double moveSpeed = 1.0;
     Vec2 forward;
@@ -17,13 +19,18 @@ public class Player extends GameObject
     Double rotation = 0.0;
     Double turnSpeed = 3.0;
 
-    Vec2 _velocity;
     Double _drag = 0.9;
 
+    int playerNum;
 
-    public Player(Double x, double y, Pane pane)
+    Double projectileSpeed = 10.0;
+    boolean fired = false;
+
+    public Player(int num, Double x, double y, Pane pane)
     {
         super(x, y, pane);
+
+        playerNum = num;
         
         keyStates = new boolean[KeyCode.W.ordinal() + 1];
 
@@ -48,11 +55,6 @@ public class Player extends GameObject
         _velocity = new Vec2(0.0, 0.0);
     }
 
-    public void SetKey(KeyCode key, boolean b)
-    {
-        keyStates[key.ordinal()] = b;
-    }
-
     @Override 
     public void Update()
     {
@@ -69,10 +71,10 @@ public class Player extends GameObject
         }
 
         if(keyStates[KeyCode.A.ordinal()])
-            Rotate(-turnSpeed);
+            Rotate(turnSpeed);
 
         if(keyStates[KeyCode.D.ordinal()])
-            Rotate(turnSpeed);         
+            Rotate(-turnSpeed);         
 
         Move(_velocity);
 
@@ -106,7 +108,6 @@ public class Player extends GameObject
         Vec2 bl = new Vec2(_position.x - (forward.x * size) - (right.x * size), _position.y - (forward.y * size) - (right.y * size));
         Vec2 br = new Vec2(_position.x - (forward.x * size) + (right.x * size), _position.y - (forward.y * size) + (right.y * size));
 
-
         components.get(0).setStartX(top.x);
         components.get(0).setStartY(top.y);
         components.get(0).setEndX(bl.x);
@@ -116,6 +117,33 @@ public class Player extends GameObject
         components.get(1).setStartY(top.y);
         components.get(1).setEndX(br.x);
         components.get(1).setEndY(br.y);
+    }
 
+    public Projectile FireProjectile()
+    {
+        Projectile proj = new Projectile(playerNum, _position.x, _position.y, _pane);
+        proj.SetVelocity(new Vec2(forward.x * projectileSpeed, forward.y * projectileSpeed));
+
+        if(playerNum == 1)
+            proj.SetColor(Color.BLUE);
+
+        else
+            proj.SetColor(Color.RED);
+
+        fired = true;
+
+        System.out.println("Memes");
+
+        return proj;
+    }
+
+    public void SetKey(KeyCode key, boolean b)
+    {
+        keyStates[key.ordinal()] = b;
+    }
+
+    public int GetPlayerNum()
+    {
+        return playerNum;
     }
 }
