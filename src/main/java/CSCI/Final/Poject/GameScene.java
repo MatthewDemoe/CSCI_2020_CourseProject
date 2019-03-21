@@ -10,8 +10,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javafx.scene.paint.Color;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
+import java.util.Vector;
 import java.io.*;
 import java.net.*;
 
@@ -23,15 +25,24 @@ public class GameScene extends Application
     DataOutputStream toServer = null;
     DataInputStream fromServer = null;
     Socket socket;
+    
 
     private Player player;
     private Player player2;
+    private Vector<Player> players;
 
     private int playerNum = 0;
 
     public GameScene()
     {
-        try {
+        
+    }
+
+    @Override
+    public void start(Stage primaryStage)
+    {
+        try 
+        {
             // 3. Create a socket to connect to the server
               socket = new Socket("localhost", 8000);
       
@@ -45,82 +56,64 @@ public class GameScene extends Application
               System.out.println(playerNum);
       
           }
-          catch (IOException ex) {
+          catch (IOException ex) 
+          {
             //ta.appendText(ex.toString() + '\n');
           }
 
 
-    }
-
-    @Override
-    public void start(Stage primaryStage)
-    {
         Pane pane = new Pane();
 
         player = new Player(100.0, 100.0, pane);
         player2 = new Player(500.0, 500.0, pane);
 
-        Scene scene = new Scene(pane, 1600, 900); 
+        players = new Vector<Player>();
+
+        if(playerNum == 1)
+        {
+            player.SetColor(Color.BLUE);
+            player2.SetColor(Color.RED);
+        }
+
+        else
+        {
+            player.SetColor(Color.RED);
+            player2.SetColor(Color.BLUE);
+        }
+
+        players.add(player);
+        players.add(player2);
+
+        Scene scene = new Scene(pane, 800, 600); 
         
         GetInput(scene);
 
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             while(true)
             {
-                try {
-                    // Get the radius from the text field
-                    //String test = "Memes";
-                    
-                    //System.out.println(test);
-              
-                    // 1. Send the radius to the server
-            
-                    //toServer.writeUTF(test);       
-                   
-                    //toServer.flush();
-              
-                    // 2. Get area from the server            
+                try {  
                     String serverIn = fromServer.readUTF();
                     HandleServerInput(serverIn);
 
-                    //System.out.println(serverIn);          
-            
-              
-                    // Display to the text area
-                    /*ta.appendText("Radius is " + radius + "\n");
-                    ta.appendText("Area received from the server is " + area + '\n');*/
+                    //Why do I have to do this?
+                    Platform.runLater(() -> {
+                        //Update all players
+                        for(int i = 0; i < players.size(); i++)
+                        {
+                            players.get(i).Update();
+                        }
+                    }); 
+
                   }
-                  catch (IOException ex) {
+                  catch (IOException ex) 
+                  {
                     System.err.println(ex);
                   }
-
-
-            }
-        }).start();
-        /*Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                Runnable updater = new Runnable(){
-                    @Override
-                    public void run(){
-                        //System.out.println("Memes");
-                        
-                    }
-                };
-
-                while(true){
-                    try{
-                        Thread.sleep(10);
-                    }catch(InterruptedException ex){                        
-                    }
-
-                    Platform.runLater(updater);
-                }
             }
         });
 
         thread.setDaemon(true);
-        thread.start();*/
+        thread.start();
 
         primaryStage.setTitle("Teen Galaga"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
@@ -142,21 +135,61 @@ public class GameScene extends Application
                 {
                    switch(event.getCode())
                    {
-                       case W:
+                        case W:
                            toServer.writeChar('W');
                            break;
                        
-                       case S:
+                        case S:
                            toServer.writeChar('S');
                            break;
    
-                       case A:          
+                        case A:          
                            toServer.writeChar('A');
                            break;
    
-                       case D:            
+                        case D:            
                            toServer.writeChar('D');
                            break;
+
+                        case SPACE:
+                            toServer.writeChar('X');
+                            break; 
+                   }
+                   
+               }
+               catch (IOException ex) {
+                System.err.println(ex);
+              }
+            }
+        });
+
+        
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
+            @Override
+            public void handle(KeyEvent event){
+                try
+                {
+                   switch(event.getCode())
+                   {
+                        case W:
+                           toServer.writeChar('w');
+                           break;
+                       
+                        case S:
+                           toServer.writeChar('s');
+                           break;
+   
+                        case A:          
+                           toServer.writeChar('a');
+                           break;
+   
+                        case D:            
+                           toServer.writeChar('d');
+                           break;
+
+                        case SPACE:
+                           toServer.writeChar('x');
+                           break; 
                    }
                    
                }
@@ -169,52 +202,54 @@ public class GameScene extends Application
 
     private void HandleServerInput(String in)
     {
-        System.out.println(in);
         int currentPlayer = 0;
 
         for(int i = 0; i < in.length(); i++)
         {
             switch(in.charAt(i))
             {
+                case '0':
+                    currentPlayer = 0;
+                    break;
+
                 case '1':
                     currentPlayer = 1;
                     break;
 
-                case '2':
-                    currentPlayer = 2;
-                    break;
-
                 case 'W':
-                    if(currentPlayer == 1)
-                        player.Move(new Vec2(0.0, -100.0));
-
-                    if(currentPlayer == 2)
-                        player2.Move(new Vec2(0.0, -100.0));
+                    players.get(currentPlayer).SetKey(KeyCode.W, true);
 
                     break;
                        
                 case 'S':
-                    if(currentPlayer == 1)
-                        player.Move(new Vec2(0.0, 100.0));
-
-                    if(currentPlayer == 2)
-                        player2.Move(new Vec2(0.0, 100.0));
+                    players.get(currentPlayer).SetKey(KeyCode.S, true);
                    break;
  
                 case 'A':
-                    if(currentPlayer == 1)
-                        player.Move(new Vec2(-100.0, 0.0));
-
-                    if(currentPlayer == 2)
-                        player2.Move(new Vec2(-100.0, 0.0));
+                    
+                    players.get(currentPlayer).SetKey(KeyCode.A, true);
                     break;
    
                 case 'D':
-                    if(currentPlayer == 1)
-                        player.Move(new Vec2(100.0, 0.0));
+                    players.get(currentPlayer).SetKey(KeyCode.D, true);
+                    break;
 
-                    if(currentPlayer == 2)
-                        player2.Move(new Vec2(100.0, 0.0));
+                case 'w':
+                    players.get(currentPlayer).SetKey(KeyCode.W, false);
+
+                    break;
+                       
+                case 's':
+                    players.get(currentPlayer).SetKey(KeyCode.S, false);
+                   break;
+ 
+                case 'a':
+                    
+                    players.get(currentPlayer).SetKey(KeyCode.A, false);
+                    break;
+   
+                case 'd':
+                    players.get(currentPlayer).SetKey(KeyCode.D, false);
                     break;
             }
         }

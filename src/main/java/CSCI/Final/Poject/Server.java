@@ -86,7 +86,7 @@ public class Server extends Application {
 
           for(int i = 0; i < clients.size(); i++)
           {            
-            playerInputs += (i + 1) + clients.get(i).GetInputs();
+            playerInputs += i + clients.get(i).GetInputs();
           }
 
           for(int i = 0; i < clients.size(); i++)

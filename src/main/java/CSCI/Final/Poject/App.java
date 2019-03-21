@@ -61,7 +61,7 @@ public class App extends Application
             Platform.exit();
         });
 
-        Scene scene = new Scene(pane, 1600, 900);
+        Scene scene = new Scene(pane, 800, 600);
         primaryStage.setTitle("Teen Galaga Title"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
