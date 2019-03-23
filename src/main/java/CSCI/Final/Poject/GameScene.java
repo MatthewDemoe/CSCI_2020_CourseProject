@@ -29,9 +29,9 @@ public class GameScene extends Application
 
     private Player player;
     private Player player2;
-    private Vector<Player> players;
-    private Vector<Projectile> projectiles;
-
+    private int kills;
+    private int deaths;
+    private int highScores[5][5];    private Vector<Player> players;    private Vector<Projectile> projectiles;
     private int playerNum = 0;
 
     public GameScene()
@@ -117,7 +117,7 @@ public class GameScene extends Application
                                     }
 
                                 }
-    
+                        //System.out.println("Memes");
                             }
                         }
 
@@ -170,11 +170,11 @@ public class GameScene extends Application
                            toServer.writeChar('S');
                            break;
    
-                        case A:          
+                        case A:         
                            toServer.writeChar('A');
                            break;
    
-                        case D:            
+                        case D:           
                            toServer.writeChar('D');
                            break;
 
@@ -267,7 +267,6 @@ public class GameScene extends Application
                 case 'w':
                     players.get(currentPlayer).SetKey(KeyCode.W, false);
                     break;
-                       
                 case 's':
                     players.get(currentPlayer).SetKey(KeyCode.S, false);
                    break;
@@ -284,5 +283,57 @@ public class GameScene extends Application
                     break;
             }
         }});
+    }
+}
+ public void save() {
+        File f = new File(currentFileName);
+
+        try {
+
+            PrintWriter p = new PrintWriter(f);
+
+            for(int i = 0;i < l.size();i++) {
+              if (kills >= highScores[i][0])
+              {
+                if (deaths <= highScores[i][1])
+                {
+                  if (i + 1 < 5)
+                  {
+                    highScores[i+1][0] = highScores[i][0];
+                    highScores[i+1][1] = highScores[i][1];
+                  }
+                  highScores[i][0] = kills;
+                  highScores[i][1] = deaths;
+                }
+              }
+                p.println(kills + "," + deaths);
+            }
+
+            p.flush();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void load() {
+
+
+
+        try {
+            Scanner in = new Scanner(new File(currentFileName));
+            int i = 0;
+            while(in.hasNextLine()) {
+                String[] str = in.nextLine().split(",");
+                highScores[i][0] = str[0];
+                highScores[i][1] = str[1];
+                i++;
+            }
+
+            in.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
