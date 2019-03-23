@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCode;
 import java.util.Vector;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 import main.java.CSCI.Final.Poject.Player;
 
@@ -341,8 +342,8 @@ public class GameScene extends Application
             int i = 0;
             while(in.hasNextLine()) {
                 String[] str = in.nextLine().split(",");
-                highScores[i][0] = str[0];
-                highScores[i][1] = str[1];
+                highScores[i][0] = Integer.valueOf(str[0]);
+                highScores[i][1] = Integer.valueOf(str[1]);
                 i++;
             }
 
