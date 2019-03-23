@@ -309,7 +309,7 @@ public class GameScene extends Application
 
             PrintWriter p = new PrintWriter(f);
 
-            for(int i = 0;i < l.size();i++) {
+            for(int i = 0;i < highScores.length;i++) {
               if (kills >= highScores[i][0])
               {
                 if (deaths <= highScores[i][1])
