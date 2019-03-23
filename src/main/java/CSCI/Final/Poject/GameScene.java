@@ -31,12 +31,14 @@ public class GameScene extends Application
     private Player player2;
     private int kills;
     private int deaths;
-    private int highScores[5][5];    private Vector<Player> players;    private Vector<Projectile> projectiles;
+    private int highScores[][];    
+    private Vector<Player> players;    
+    private Vector<Projectile> projectiles;
     private int playerNum = 0;
 
     public GameScene()
     {
-        
+        highScores = new int[5][5];
     }
 
     @Override
@@ -53,13 +55,14 @@ public class GameScene extends Application
             // 5. Create an output stream to send data to the server
               toServer = new DataOutputStream(socket.getOutputStream());
 
+
+              //When you connect to the server, it will send you an int representing which player you are 
               playerNum = fromServer.readInt();
               System.out.println(playerNum);
       
           }
           catch (IOException ex) 
           {
-            //ta.appendText(ex.toString() + '\n');
           }
 
         Pane pane = new Pane();
@@ -67,6 +70,7 @@ public class GameScene extends Application
         players = new Vector<Player>();
         projectiles = new Vector<Projectile>();
 
+        //Initializing players 
         if(playerNum == 1)
         {
             player = new Player(1, 100.0, 100.0, pane);
@@ -92,32 +96,36 @@ public class GameScene extends Application
         
         GetInput(scene);
 
+        //Creating a new thread to perform operations in 
         Thread thread = new Thread(() -> {
             while(true)
             {
                 try {  
+                    //This is where we read data from the server 
                     String serverIn = fromServer.readUTF();
                     HandleServerInput(serverIn);
                     
-                    //JavaFX :)
+                    //Doing operations in JavaFX thread, because we are adjusting nodes
                     Platform.runLater(() -> {
 
                         for(int j = 0; j < projectiles.size(); j++)
                         {
+                            //Move each projectile
                             projectiles.get(j).Update();
 
                             for(int i = 0; i < players.size(); i++)
                             {
                                 if(players.get(i).GetPlayerNum() != projectiles.get(j).GetPlayerNum())
                                 {
+                                    //Check if any projectiles are colliding with a player who's number is not the same as the projectile's
                                     if(projectiles.get(j).CheckCollision(players.get(i)))
                                     {
+                                        //if the projectile is colliding, then delete it
                                         projectiles.removeElementAt(j);
                                         break;
                                     }
 
                                 }
-                        //System.out.println("Memes");
                             }
                         }
 
@@ -125,7 +133,6 @@ public class GameScene extends Application
                         for(int i = 0; i < players.size(); i++)
                         {
                             players.get(i).Update();
-
                         }
 
 
@@ -152,14 +159,16 @@ public class GameScene extends Application
         launch(args);
     }
 
+    //Check the keystates of a player
     private void GetInput(Scene scene)
     {
-        
+        //When any key is pressed down 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
             @Override
             public void handle(KeyEvent event){
                 try
                 {
+                    //Sending to the server which key has been pressed                     
                    switch(event.getCode())
                    {
                         case W:
@@ -190,11 +199,13 @@ public class GameScene extends Application
             }
         });
         
+        //Whenever a key is released
         scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
             @Override
             public void handle(KeyEvent event){
                 try
                 {
+                    //Sending to the server which key has been released                 
                    switch(event.getCode())
                    {
                         case W:
@@ -225,25 +236,30 @@ public class GameScene extends Application
         });
     }
 
+    //Argument is string sent from server 
     private void HandleServerInput(String in)
     {
         //I am creating projectile to add to the scene, so javaFX is making me do this
         Platform.runLater(() -> {
         int currentPlayer = 0;
 
+        //Iterate through each character in the string sent from the server. This corresponds to each keystate from each player
         for(int i = 0; i < in.length(); i++)
         {
-
             switch(in.charAt(i))
             {
+                //0 means the following inputs are for player 0
                 case '0':
                     currentPlayer = 0;
                     break;
 
+                //1 means the following inputs are for player 1
                 case '1':
                     currentPlayer = 1;
                     break;
 
+                //Sets the corresponding keystate for the corresponding player
+                //Capital letter means button down, lowercase means button up
                 case 'W':
                     players.get(currentPlayer).SetKey(KeyCode.W, true);
                     break;
@@ -284,7 +300,7 @@ public class GameScene extends Application
             }
         }});
     }
-}
+
  public void save() {
         File f = new File(currentFileName);
 

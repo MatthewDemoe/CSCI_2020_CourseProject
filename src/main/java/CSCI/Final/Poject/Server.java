@@ -67,6 +67,7 @@ public class Server extends Application {
 
             new Thread(new HandleAClient(clientSock)).start();
 
+            //Stop listening for new clients when 2 have connected 
             if(clientNo == maxUsers)
             {
               break;
@@ -77,18 +78,22 @@ public class Server extends Application {
         {
           try
           {
+            //Send all received data after every 10 milliseconds 
             Thread.sleep(10);
           }
 
           catch(InterruptedException ex){}
-                               
+                         
+          //Reset player input string
           playerInputs = "";
 
+          //Append player input information to the string
           for(int i = 0; i < clients.size(); i++)
           {            
             playerInputs += i + clients.get(i).GetInputs();
           }
 
+          //Send input to both players, who are running the game synchronously 
           for(int i = 0; i < clients.size(); i++)
           {
             clients.get(i).GetOutputStream().writeUTF(playerInputs);
@@ -136,19 +141,11 @@ public class Server extends Application {
         clients.add(this);
 
         while (true) {
-          // 6. Receive radius from the client
+          // 6. Receive key input from client
           char inChar =  inputFromClient.readChar();
-        	
-          inputs += inChar;
-          System.out.println(inputs);
-
-          // 7. Send area back to the client
-            //outputToClient.writeDouble(area);
           
-            Platform.runLater(() -> {
-            ta.appendText("radius received from client: " + inChar + '\n');
-            ta.appendText("Area found: " + inChar + '\n');
-          });
+          //Write received keystate to input string
+          inputs += inChar;
         }
       }
       catch(IOException ex) {

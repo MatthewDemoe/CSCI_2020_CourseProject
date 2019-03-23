@@ -3,9 +3,13 @@ package main.java.CSCI.Final.Poject;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
+//Projectiles that the player shoots 
 public class Projectile extends GameObject
 {
+    //playerNum is the player who shot the projectile
     int playerNum;
+    
+    //The two lines that compose the projectile
     Line h;
     Line v;
 
@@ -31,6 +35,7 @@ public class Projectile extends GameObject
     @Override
     public void Update()
     {
+        //Move the projectile every update. I should be doing this based on dt...
         Move(_velocity);
     }
 
@@ -46,18 +51,20 @@ public class Projectile extends GameObject
 
     public boolean CheckCollision(GameObject obj)
     {
+        //The vector from the projectile's position to the other object's position
         Vec2 toObj = new Vec2(obj._position.x - _position.x, obj._position.y - _position.y);
 
+        //Check if the distance between the projectile and the object is greater than the sum of their radii
         if(toObj.Magnitude() < (GetSize() + obj.GetSize()))
         {
             deleteThis();
             return true;
         }
 
+        //Also check if the projectile leaves the bounds of the pane
         else if((_position.x <= 0 + _velocity.Magnitude()) || (_position.x >= _pane.getWidth() - _velocity.Magnitude()))
         {
             deleteThis();
-
             return true;
         }
 
@@ -67,6 +74,7 @@ public class Projectile extends GameObject
             return true;
         }
 
+        //Return false if no other cases are met
         return false;
     }
 
