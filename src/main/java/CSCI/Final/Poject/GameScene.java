@@ -20,25 +20,31 @@ import java.util.Scanner;
 
 import main.java.CSCI.Final.Poject.Player;
 
-public class GameScene extends Application 
+public class GameScene extends Application
 {
     // IO streams
     DataOutputStream toServer = null;
     DataInputStream fromServer = null;
     Socket socket;
-    
+
 
     private Player player;
     private Player player2;
-    private int kills;
-    private int deaths;
-    private int highScores[][];    
-    private Vector<Player> players;    
+    private int k1 = 0;
+    private int k2 = 0;
+    private int d1 = 0;
+    private int d2 = 0;
+    private Vector<int> kills;
+    private Vector<int> deaths;
+    private int highScores[][];
+    private Vector<Player> players;
     private Vector<Projectile> projectiles;
     private int playerNum = 0;
     private String currentFileName;
 
     private boolean prevFired = false;
+
+    private int whoWon;
 
     public GameScene()
     {
@@ -49,24 +55,24 @@ public class GameScene extends Application
     @Override
     public void start(Stage primaryStage)
     {
-        try 
+        try
         {
             // 3. Create a socket to connect to the server
               socket = new Socket("localhost", 8000);
-      
+
             // 4. Create an input stream to receive data from the server
               fromServer = new DataInputStream(socket.getInputStream());
-      
+
             // 5. Create an output stream to send data to the server
               toServer = new DataOutputStream(socket.getOutputStream());
 
 
-              //When you connect to the server, it will send you an int representing which player you are 
+              //When you connect to the server, it will send you an int representing which player you are
               playerNum = fromServer.readInt();
               System.out.println(playerNum);
-      
+
           }
-          catch (IOException ex) 
+          catch (IOException ex)
           {
           }
 
@@ -75,7 +81,7 @@ public class GameScene extends Application
         players = new Vector<Player>();
         projectiles = new Vector<Projectile>();
 
-        //Initializing players 
+        //Initializing players
         if(playerNum == 1)
         {
             player = new Player(1, 100.0, 100.0, pane);
@@ -98,19 +104,24 @@ public class GameScene extends Application
         players.add(player);
         players.add(player2);
 
-        Scene scene = new Scene(pane, 800, 600); 
-        
+        kills.add(k1);
+        kills.add(k2);
+        deaths.add(d1);
+        deaths.add(d2);
+
+        Scene scene = new Scene(pane, 800, 600);
+
         GetInput(scene);
 
-        //Creating a new thread to perform operations in 
+        //Creating a new thread to perform operations in
         Thread thread = new Thread(() -> {
             while(true)
             {
-                try {  
-                    //This is where we read data from the server 
+                try {
+                    //This is where we read data from the server
                     String serverIn = fromServer.readUTF();
                     HandleServerInput(serverIn);
-                    
+
                     //Doing operations in JavaFX thread, because we are adjusting nodes
                     Platform.runLater(() -> {
 
@@ -128,6 +139,16 @@ public class GameScene extends Application
                                     {
                                         //if the projectile is colliding, then delete it
                                         projectiles.removeElementAt(j);
+                                        players.get(i).Respawn(100.0 + 400.0*i, 100.0 + 400.0*i);
+                                        deaths[i]++;
+                                        if (i == 0)
+                                        {
+                                          kills[1]++;
+                                        }
+                                        else if (i == 1)
+                                        {
+                                          kills[0]++;
+                                        }
                                         break;
                                     }
 
@@ -142,10 +163,10 @@ public class GameScene extends Application
                         }
 
 
-                    }); 
+                    });
 
                   }
-                  catch (IOException ex) 
+                  catch (IOException ex)
                   {
                     System.err.println(ex);
                   }
@@ -157,10 +178,10 @@ public class GameScene extends Application
 
         primaryStage.setTitle("Teen Galaga"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
-        primaryStage.show(); // Display the stage              
+        primaryStage.show(); // Display the stage
     }
 
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         launch(args);
     }
@@ -168,33 +189,33 @@ public class GameScene extends Application
     //Check the keystates of a player
     private void GetInput(Scene scene)
     {
-        //When any key is pressed down 
+        //When any key is pressed down
         scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
             @Override
             public void handle(KeyEvent event){
                 try
                 {
-                    //Sending to the server which key has been pressed                     
+                    //Sending to the server which key has been pressed
                    switch(event.getCode())
                    {
                         case W:
                            toServer.writeChar('W');
                            break;
-                       
+
                         case S:
                            toServer.writeChar('S');
                            break;
-   
-                        case A:         
+
+                        case A:
                            toServer.writeChar('A');
                            break;
-   
-                        case D:           
+
+                        case D:
                            toServer.writeChar('D');
                            break;
 
                         case SPACE:
-                            if(!prevFired) 
+                            if(!prevFired)
                               toServer.writeChar('X');
                             prevFired = true;
                             break;
@@ -207,37 +228,37 @@ public class GameScene extends Application
         });
 
 
-        
+
         //Whenever a key is released
         scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
             @Override
             public void handle(KeyEvent event){
                 try
                 {
-                    //Sending to the server which key has been released                 
+                    //Sending to the server which key has been released
                    switch(event.getCode())
                    {
                         case W:
                            toServer.writeChar('w');
                            break;
-                       
+
                         case S:
                            toServer.writeChar('s');
                            break;
-   
-                        case A:          
+
+                        case A:
                            toServer.writeChar('a');
                            break;
-   
-                        case D:            
+
+                        case D:
                            toServer.writeChar('d');
                            break;
 
                         case SPACE:
                            toServer.writeChar('x');
                            prevFired = false;
-                           break; 
-                   }                   
+                           break;
+                   }
                }
                catch (IOException ex) {
                 System.err.println(ex);
@@ -246,7 +267,7 @@ public class GameScene extends Application
         });
     }
 
-    //Argument is string sent from server 
+    //Argument is string sent from server
     private void HandleServerInput(String in)
     {
         //I am creating projectile to add to the scene, so javaFX is making me do this
@@ -273,15 +294,15 @@ public class GameScene extends Application
                 case 'W':
                     players.get(currentPlayer).SetKey(KeyCode.W, true);
                     break;
-                       
+
                 case 'S':
                     players.get(currentPlayer).SetKey(KeyCode.S, true);
                    break;
- 
-                case 'A':                    
+
+                case 'A':
                     players.get(currentPlayer).SetKey(KeyCode.A, true);
                     break;
-   
+
                 case 'D':
                     players.get(currentPlayer).SetKey(KeyCode.D, true);
                     break;
@@ -296,11 +317,11 @@ public class GameScene extends Application
                 case 's':
                     players.get(currentPlayer).SetKey(KeyCode.S, false);
                    break;
- 
-                case 'a':                    
+
+                case 'a':
                     players.get(currentPlayer).SetKey(KeyCode.A, false);
                     break;
-   
+
                 case 'd':
                     players.get(currentPlayer).SetKey(KeyCode.D, false);
                     break;
@@ -319,20 +340,20 @@ public class GameScene extends Application
             PrintWriter p = new PrintWriter(f);
 
             for(int i = 0;i < highScores.length;i++) {
-              if (kills >= highScores[i][0])
+              if (kills[whoWon] >= highScores[i][0])
               {
-                if (deaths <= highScores[i][1])
+                if (deaths[whoWon] <= highScores[i][1])
                 {
                   if (i + 1 < 5)
                   {
                     highScores[i+1][0] = highScores[i][0];
                     highScores[i+1][1] = highScores[i][1];
                   }
-                  highScores[i][0] = kills;
-                  highScores[i][1] = deaths;
+                  highScores[i][0] = kills[whoWon];
+                  highScores[i][1] = deaths[whoWon];
                 }
               }
-                p.println(kills + "," + deaths);
+                p.println(kills[whoWon] + "," + deaths[whoWon]);
             }
 
             p.flush();
