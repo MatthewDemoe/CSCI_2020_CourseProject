@@ -162,7 +162,7 @@ public class Player extends GameObject
 
     public void Respawn(Double x, Double y)
     {
-      _velocity = 0;
+      _velocity = new Vec2(0.0, 0.0);
       _position = new Vec2(x, y);
     }
 }

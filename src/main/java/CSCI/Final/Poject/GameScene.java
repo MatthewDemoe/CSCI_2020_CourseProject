@@ -34,8 +34,8 @@ public class GameScene extends Application
     private int k2 = 0;
     private int d1 = 0;
     private int d2 = 0;
-    private Vector<int> kills;
-    private Vector<int> deaths;
+    private Vector<Integer> kills;
+    private Vector<Integer> deaths;
     private int highScores[][];
     private Vector<Player> players;
     private Vector<Projectile> projectiles;
@@ -80,6 +80,9 @@ public class GameScene extends Application
 
         players = new Vector<Player>();
         projectiles = new Vector<Projectile>();
+
+        kills = new Vector<Integer>();
+        deaths = new Vector<Integer>();
 
         //Initializing players
         if(playerNum == 1)
@@ -140,14 +143,17 @@ public class GameScene extends Application
                                         //if the projectile is colliding, then delete it
                                         projectiles.removeElementAt(j);
                                         players.get(i).Respawn(100.0 + 400.0*i, 100.0 + 400.0*i);
-                                        deaths[i]++;
+                                        deaths.setElementAt(deaths.get(i)+1, i);
+                                        //deaths[i]++;
                                         if (i == 0)
                                         {
-                                          kills[1]++;
+                                          kills.setElementAt(kills.get(1)+1, 1);
+                                          //kills[1]++;
                                         }
                                         else if (i == 1)
                                         {
-                                          kills[0]++;
+                                          kills.setElementAt(kills.get(0)+1, 0);
+                                          //kills[0]++;
                                         }
                                         break;
                                     }
@@ -340,20 +346,20 @@ public class GameScene extends Application
             PrintWriter p = new PrintWriter(f);
 
             for(int i = 0;i < highScores.length;i++) {
-              if (kills[whoWon] >= highScores[i][0])
+              if (kills.get(whoWon) >= highScores[i][0])
               {
-                if (deaths[whoWon] <= highScores[i][1])
+                if (deaths.get(whoWon) <= highScores[i][1])
                 {
                   if (i + 1 < 5)
                   {
                     highScores[i+1][0] = highScores[i][0];
                     highScores[i+1][1] = highScores[i][1];
                   }
-                  highScores[i][0] = kills[whoWon];
-                  highScores[i][1] = deaths[whoWon];
+                  highScores[i][0] = kills.get(whoWon);
+                  highScores[i][1] = deaths.get(whoWon);
                 }
               }
-                p.println(kills[whoWon] + "," + deaths[whoWon]);
+                p.println(kills.get(whoWon) + "," + deaths.get(whoWon));
             }
 
             p.flush();
