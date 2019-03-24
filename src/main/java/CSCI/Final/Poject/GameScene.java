@@ -144,16 +144,16 @@ public class GameScene extends Application
                                         projectiles.removeElementAt(j);
                                         players.get(i).Respawn(100.0 + 400.0*i, 100.0 + 400.0*i);
                                         deaths.setElementAt(deaths.get(i)+1, i);
-                                        //deaths[i]++;
+                                        System.out.println(i+1 + " died " + deaths.get(i) + " times."); //Debugging comment to remove later
                                         if (i == 0)
                                         {
                                           kills.setElementAt(kills.get(1)+1, 1);
-                                          //kills[1]++;
+                                          System.out.println(2 + " killed " + kills.get(1) + " times."); //Debugging comment to remove later
                                         }
                                         else if (i == 1)
                                         {
                                           kills.setElementAt(kills.get(0)+1, 0);
-                                          //kills[0]++;
+                                          System.out.println(1 + " killed " + kills.get(0) + " times."); //Debugging comment to remove later
                                         }
                                         break;
                                     }
