@@ -38,6 +38,8 @@ public class GameScene extends Application
     private int playerNum = 0;
     private String currentFileName;
 
+    private boolean prevFired = false;
+
     public GameScene()
     {
         highScores = new int[5][5];
@@ -91,6 +93,7 @@ public class GameScene extends Application
             player.SetColor(Color.RED);
             player2.SetColor(Color.BLUE);
         }
+        player2.Rotate(180.0);
 
         players.add(player);
         players.add(player2);
@@ -191,16 +194,19 @@ public class GameScene extends Application
                            break;
 
                         case SPACE:
-                            toServer.writeChar('X');
-                            break; 
+                            if(!prevFired) 
+                              toServer.writeChar('X');
+                            prevFired = true;
+                            break;
                    }
-                   
                }
                catch (IOException ex) {
                 System.err.println(ex);
               }
             }
         });
+
+
         
         //Whenever a key is released
         scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
@@ -229,6 +235,7 @@ public class GameScene extends Application
 
                         case SPACE:
                            toServer.writeChar('x');
+                           prevFired = false;
                            break; 
                    }                   
                }

@@ -28,7 +28,7 @@ public class Player extends GameObject
 
     int playerNum;
 
-    Double projectileSpeed = 10.0;
+    Double projectileSpeed = 8.0;
     boolean fired = false;
 
     public Player(int num, Double x, double y, Pane pane)
@@ -92,7 +92,7 @@ public class Player extends GameObject
         _velocity.y *= _drag;
     }
 
-    private void Rotate(Double theta)
+    public void Rotate(Double theta)
     {
         rotation += theta;
 
