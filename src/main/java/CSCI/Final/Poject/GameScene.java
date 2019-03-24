@@ -36,10 +36,12 @@ public class GameScene extends Application
     private Vector<Player> players;    
     private Vector<Projectile> projectiles;
     private int playerNum = 0;
+    private String currentFileName;
 
     public GameScene()
     {
         highScores = new int[5][5];
+        currentFileName = "saves.dat";
     }
 
     @Override
