@@ -21,6 +21,7 @@ import javafx.geometry.Insets;
 import javafx.event.EventHandler;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javafx.scene.control.TextField;
 import java.io.File;
 
 import main.java.CSCI.Final.Poject.GameScene;
@@ -41,7 +42,7 @@ public class App extends Application
 
         Font titleFont = Font.loadFont(getClass().getResourceAsStream("/fonts/emulogic.ttf"), 50);
         titleText.setFont(titleFont);
-        titleText.setFill(Color.RED);
+        titleText.setFill(Color.RED);       
 
         Button startButton = new Button("Start");
         Button serverButton = new Button("Host Server");
@@ -50,20 +51,22 @@ public class App extends Application
 
         formatButtons(startButton, serverButton, scoresButton, exitButton);
         
-        pane.add(titleText, 0, 0);
-        pane.add(startButton, 0, 1);
-        pane.add(serverButton, 0, 2);
-        pane.add(scoresButton, 0, 3);
-        pane.add(exitButton, 0, 4);
+        TextField serverInput = new TextField("Enter Server IP");
+        
+        pane.add(serverInput, 1, 0);
+        pane.add(startButton, 0, 0);
+        pane.add(serverButton, 0, 1);
+        pane.add(scoresButton, 0, 2);
+        pane.add(exitButton, 0, 3);
 
-        //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
+        //Application objects. When you click a button, it will run the start function in one of these 
         GameScene game = new GameScene();
         Server server = new Server();
 
 
         startButton.setOnAction(e -> {
             //Start Main Game
+            game.SetIP(serverInput.getText());
             game.start(primaryStage);         
         });
 
@@ -73,7 +76,7 @@ public class App extends Application
 
         scoresButton.setOnAction(e -> {
             //Show list of High scores
-            //calc.start(primaryStage);
+            
         });
 
         exitButton.setOnAction(e -> {
@@ -86,7 +89,7 @@ public class App extends Application
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
     }
-
+    
     public void formatButtons(Button... bts) {
         Font buttonFont = Font.loadFont(getClass().getResourceAsStream("/fonts/emulogic.ttf"), 20);
 

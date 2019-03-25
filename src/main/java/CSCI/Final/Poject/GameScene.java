@@ -28,6 +28,8 @@ public class GameScene extends Application
     DataInputStream fromServer = null;
     Socket socket;
 
+    String serverIP;
+
     private Player player;
     private Player player2;
     private int k1 = 0;
@@ -55,6 +57,11 @@ public class GameScene extends Application
         currentFileName = "saves.dat";
     }
 
+    public void SetIP(String ip)
+    {
+        serverIP = ip;
+    }
+
     @Override
     public void start(Stage primaryStage)
     {
@@ -63,7 +70,7 @@ public class GameScene extends Application
         try
         {
             // 3. Create a socket to connect to the server
-              socket = new Socket("localhost", 8000);
+              socket = new Socket(serverIP, 8000);
 
             // 4. Create an input stream to receive data from the server
               fromServer = new DataInputStream(socket.getInputStream());
