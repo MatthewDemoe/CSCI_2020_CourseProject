@@ -17,6 +17,7 @@ import java.util.Vector;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+import javafx.scene.text.Text;
 
 import main.java.CSCI.Final.Poject.Player;
 
@@ -26,7 +27,6 @@ public class GameScene extends Application
     DataOutputStream toServer = null;
     DataInputStream fromServer = null;
     Socket socket;
-
 
     private Player player;
     private Player player2;
@@ -42,6 +42,9 @@ public class GameScene extends Application
     private int playerNum = 0;
     private String currentFileName;
 
+    private Text p1Score;
+    private Text p2Score;
+
     private boolean prevFired = false;
 
     private int whoWon;
@@ -55,6 +58,8 @@ public class GameScene extends Application
     @Override
     public void start(Stage primaryStage)
     {
+
+
         try
         {
             // 3. Create a socket to connect to the server
@@ -71,6 +76,27 @@ public class GameScene extends Application
               playerNum = fromServer.readInt();
               System.out.println(playerNum);
 
+              p1Score = new Text(50, 50, "K: 0 \nD: 0");
+              p1Score.setScaleX(2.0);
+              p1Score.setScaleY(2.0);
+              p2Score = new Text(primaryStage.getWidth() - 75, 50, "K: 0 \nD: 0");
+              p2Score.setScaleX(2.0);
+              p2Score.setScaleY(2.0);
+              p2Score.setFill(Color.RED);
+      
+              if(playerNum == 1)
+              {
+                  p1Score.setFill(Color.BLUE);
+                p2Score.setFill(Color.RED);
+              }
+            
+            else
+            {
+                p1Score.setFill(Color.RED);
+                p2Score.setFill(Color.BLUE);
+
+            }        
+
           }
           catch (IOException ex)
           {
@@ -83,6 +109,9 @@ public class GameScene extends Application
 
         kills = new Vector<Integer>();
         deaths = new Vector<Integer>();
+
+        pane.getChildren().add(p1Score);
+        pane.getChildren().add(p2Score);
 
         //Initializing players
         if(playerNum == 1)
@@ -133,6 +162,12 @@ public class GameScene extends Application
                             //Move each projectile
                             projectiles.get(j).Update();
 
+                            if(projectiles.get(j).CheckBounds())
+                            {
+                                projectiles.removeElementAt(j);
+                                break;
+                            }
+
                             for(int i = 0; i < players.size(); i++)
                             {
                                 if(players.get(i).GetPlayerNum() != projectiles.get(j).GetPlayerNum())
@@ -143,21 +178,31 @@ public class GameScene extends Application
                                         //if the projectile is colliding, then delete it
                                         projectiles.removeElementAt(j);
                                         players.get(i).Respawn(100.0 + 400.0*i, 100.0 + 400.0*i);
-                                        deaths.setElementAt(deaths.get(i)+1, i);
+                                        deaths.setElementAt(deaths.get(i)+1, i);                                  
+
+
                                         System.out.println(i+1 + " died " + deaths.get(i) + " times."); //Debugging comment to remove later
+
                                         if (i == 0)
                                         {
                                           kills.setElementAt(kills.get(1)+1, 1);
                                           System.out.println(2 + " killed " + kills.get(1) + " times."); //Debugging comment to remove later
                                         }
+
                                         else if (i == 1)
                                         {
                                           kills.setElementAt(kills.get(0)+1, 0);
+
                                           System.out.println(1 + " killed " + kills.get(0) + " times."); //Debugging comment to remove later
                                         }
+
+                                        p1Score.setText("K: " + kills.get(0) + " \nD: " + deaths.get(0));
+
+                                        p2Score.setText("K: " + kills.get(1) + " \nD: " + deaths.get(1));
+
+
                                         break;
                                     }
-
                                 }
                             }
                         }

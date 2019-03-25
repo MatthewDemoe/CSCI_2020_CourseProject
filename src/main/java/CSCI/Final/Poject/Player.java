@@ -164,5 +164,7 @@ public class Player extends GameObject
     {
       _velocity = new Vec2(0.0, 0.0);
       _position = new Vec2(x, y);
+      
+      CreateTriangle();
     }
 }

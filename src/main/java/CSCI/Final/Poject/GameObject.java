@@ -32,7 +32,6 @@ public abstract class GameObject
         if((newY > 0) && (newY < _pane.getHeight()))
             _position.y += amount.y;
 
-
         //Moving each line that makes up the object 
         for(int i = 0; i < components.size(); i++)
         {
