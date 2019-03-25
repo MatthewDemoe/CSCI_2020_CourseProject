@@ -222,7 +222,10 @@ public class GameScene extends Application
                                     {
                                         //if the projectile is colliding, then delete it
                                         projectiles.removeElementAt(j);
-                                        players.get(i).Respawn(100.0 + 400.0*i, 100.0 + 400.0*i);
+                                        for(int k = 0;k < players.size();k++) {
+                                          players.get(k).Respawn(100.0 + 400.0*k, 100.0 + 400.0*k);
+                                          players.get(k).Rotate(180.0*k);
+                                        }
                                         deaths.setElementAt(deaths.get(i)+1, i);                                  
 
                                         if (i == 0)
