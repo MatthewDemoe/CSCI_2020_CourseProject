@@ -7,12 +7,18 @@ import javafx.scene.Scene;
 import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
+import java.util.Random;
 import java.util.Vector;
 import java.io.*;
 import java.net.*;
@@ -76,7 +82,15 @@ public class GameScene extends Application
           {
           }
 
+        Random rand = new Random();
         Pane pane = new Pane();
+        pane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+
+        for(int i = 0;i < 200;i++) {
+            Rectangle r = new Rectangle(rand.nextInt(796)+2, rand.nextInt(596)+2, 2, 2);
+            r.setFill(Color.rgb(255, 255, 255, rand.nextFloat()));
+            pane.getChildren().add(r);
+        }
 
         players = new Vector<Player>();
         projectiles = new Vector<Projectile>();
