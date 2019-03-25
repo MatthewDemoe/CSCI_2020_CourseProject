@@ -75,6 +75,7 @@ public class App extends Application
         //Application objects. When you click a button, it will run the start function in one of these 
         GameScene game = new GameScene();
         Server server = new Server();
+        ScoreScene scoreView = new ScoreScene();
 
 
         startButton.setOnAction(e -> {
@@ -89,7 +90,7 @@ public class App extends Application
 
         scoresButton.setOnAction(e -> {
             //Show list of High scores
-            
+            scoreView.start(primaryStage);
         });
 
         exitButton.setOnAction(e -> {
