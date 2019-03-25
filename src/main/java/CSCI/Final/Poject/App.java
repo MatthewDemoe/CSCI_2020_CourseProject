@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Background;
@@ -51,13 +52,25 @@ public class App extends Application
 
         formatButtons(startButton, serverButton, scoresButton, exitButton);
         
-        TextField serverInput = new TextField("Enter Server IP");
+        Font inputFont = Font.loadFont(getClass().getResourceAsStream("/fonts/OCR A Std Regular.ttf"), 12);
+
+        TextField serverInput = new TextField();
+        serverInput.setPromptText("Enter Server IP");
+        serverInput.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        serverInput.setFont(inputFont);
+        serverInput.setAlignment(Pos.CENTER);
+        serverInput.setPrefColumnCount(serverInput.getPromptText().length()+5);
+
+        HBox serverInputPane = new HBox(20);
+        serverInputPane.setAlignment(Pos.CENTER_LEFT);
+        serverInputPane.getChildren().addAll(startButton, serverInput);
         
-        pane.add(serverInput, 1, 0);
-        pane.add(startButton, 0, 0);
-        pane.add(serverButton, 0, 1);
-        pane.add(scoresButton, 0, 2);
-        pane.add(exitButton, 0, 3);
+        pane.add(titleText, 0, 0);
+        //pane.add(serverInput, 1, 1);
+        pane.add(serverInputPane, 0, 1);
+        pane.add(serverButton, 0, 2);
+        pane.add(scoresButton, 0, 3);
+        pane.add(exitButton, 0, 4);
 
         //Application objects. When you click a button, it will run the start function in one of these 
         GameScene game = new GameScene();
