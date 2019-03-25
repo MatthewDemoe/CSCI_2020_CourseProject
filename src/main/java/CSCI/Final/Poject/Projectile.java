@@ -61,20 +61,25 @@ public class Projectile extends GameObject
             return true;
         }
 
-        //Also check if the projectile leaves the bounds of the pane
-        else if((_position.x <= 0 + _velocity.Magnitude()) || (_position.x >= _pane.getWidth() - _velocity.Magnitude()))
+        //Return false if no other cases are met
+        return false;
+    }
+
+    public boolean CheckBounds()
+    {
+         //Also check if the projectile leaves the bounds of the pane
+        if((_position.x <= 0 + _velocity.Magnitude()) || (_position.x >= _pane.getWidth() - _velocity.Magnitude()))
         {
             deleteThis();
             return true;
         }
-
+        
         else if((_position.y <= 0 + _velocity.Magnitude()) || (_position.y >= _pane.getHeight() - _velocity.Magnitude()))        
         {
             deleteThis();
             return true;
         }
 
-        //Return false if no other cases are met
         return false;
     }
 
