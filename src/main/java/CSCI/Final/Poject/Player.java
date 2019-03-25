@@ -140,7 +140,7 @@ public class Player extends GameObject
 
         //Change color to fit the player who fired it
         if(playerNum == 1)
-            proj.SetColor(Color.BLUE);
+            proj.SetColor(Color.LIGHTSEAGREEN);
 
         else
             proj.SetColor(Color.RED);

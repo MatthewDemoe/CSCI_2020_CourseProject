@@ -65,6 +65,14 @@ public class GameScene extends Application
     public void start(Stage primaryStage)
     {
 
+        p1Score = new Text(50, 50, "K: 0 \nD: 0");
+        p1Score.setScaleX(2.0);
+        p1Score.setScaleY(2.0);
+        p2Score = new Text(primaryStage.getWidth() - 75, 50, "K: 0 \nD: 0");
+        p2Score.setScaleX(2.0);
+        p2Score.setScaleY(2.0);
+        p2Score.setFill(Color.RED);
+
 
         try
         {
@@ -81,25 +89,17 @@ public class GameScene extends Application
               //When you connect to the server, it will send you an int representing which player you are
               playerNum = fromServer.readInt();
               System.out.println(playerNum);
-
-              p1Score = new Text(50, 50, "K: 0 \nD: 0");
-              p1Score.setScaleX(2.0);
-              p1Score.setScaleY(2.0);
-              p2Score = new Text(primaryStage.getWidth() - 75, 50, "K: 0 \nD: 0");
-              p2Score.setScaleX(2.0);
-              p2Score.setScaleY(2.0);
-              p2Score.setFill(Color.RED);
       
               if(playerNum == 1)
               {
-                  p1Score.setFill(Color.BLUE);
+                  p1Score.setFill(Color.LIGHTSEAGREEN);
                 p2Score.setFill(Color.RED);
               }
             
             else
             {
                 p1Score.setFill(Color.RED);
-                p2Score.setFill(Color.BLUE);
+                p2Score.setFill(Color.LIGHTSEAGREEN);
 
             }        
 
@@ -133,7 +133,7 @@ public class GameScene extends Application
             player = new Player(1, 100.0, 100.0, pane);
             player2 = new Player(2, 500.0, 500.0, pane);
 
-            player.SetColor(Color.BLUE);
+            player.SetColor(Color.LIGHTSEAGREEN);
             player2.SetColor(Color.RED);
         }
 
@@ -143,7 +143,7 @@ public class GameScene extends Application
             player2 = new Player(1, 500.0, 500.0, pane);
 
             player.SetColor(Color.RED);
-            player2.SetColor(Color.BLUE);
+            player2.SetColor(Color.LIGHTSEAGREEN);
         }
         player2.Rotate(180.0);
 
