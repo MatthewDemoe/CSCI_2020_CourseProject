@@ -10,13 +10,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import java.util.Vector;
+import java.time.*;
 
 public class Server extends Application {
     
     public Server()
     {
-
     }
+
+    private double startTime;
+    private double deltaTime = 1;
 
     private int clientNo = 0;
     private int maxUsers = 2;
@@ -46,6 +49,7 @@ public class Server extends Application {
         while(true)
         {
             // 2. Listen for a connection request
+
             Socket clientSock = serverSocket.accept();
 
             clientNo++;
@@ -70,10 +74,13 @@ public class Server extends Application {
             //Stop listening for new clients when 2 have connected 
             if(clientNo == maxUsers)
             {
+              startTime = System.currentTimeMillis();
+              playerInputs = "";
               break;
             }
         }
 
+        //Game Loop
         while(true)
         {
           try
@@ -83,9 +90,23 @@ public class Server extends Application {
           }
 
           catch(InterruptedException ex){}
+
+          deltaTime = (System.currentTimeMillis() - startTime) / 1000.0;
+
+          for(int i = 0; i < clients.size(); i++)
+          {            
+            clients.get(i).GetOutputStream().writeInt((int)(60 - deltaTime));
+          }    
                          
           //Reset player input string
           playerInputs = "";
+
+          //Game ends when timer runs out
+          //We wait until here in the loop so that we still send the time to the players and reset the playerInputs string
+          if((60 - deltaTime) <= 0.0)
+          {
+            break;
+          }
 
           //Append player input information to the string
           for(int i = 0; i < clients.size(); i++)
@@ -99,7 +120,7 @@ public class Server extends Application {
             clients.get(i).GetOutputStream().writeUTF(playerInputs);
             clients.get(i).ResetInputs();
           }
-        }
+        }        
       }
       catch(IOException ex) {
         ex.printStackTrace();
@@ -111,6 +132,7 @@ public class Server extends Application {
     private Socket socket; 
     private String inputs = "";
     DataOutputStream outputToClient;
+    Double score;
 
     public HandleAClient(Socket socket) {
       this.socket = socket;
@@ -140,15 +162,17 @@ public class Server extends Application {
 
         clients.add(this);
 
-        while (true) {
+        while (true) 
+        {
           // 6. Receive key input from client
           char inChar =  inputFromClient.readChar();
           
           //Write received keystate to input string
           inputs += inChar;
-        }
+        }      
       }
-      catch(IOException ex) {
+      catch(IOException ex) 
+      {
         ex.printStackTrace();
       }
     }

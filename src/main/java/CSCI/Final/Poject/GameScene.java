@@ -50,8 +50,12 @@ public class GameScene extends Application
     private int playerNum = 0;
     private String currentFileName;
 
+    int timeFromServer;
+    String serverIn;
+
     private Text p1Score;
     private Text p2Score;
+    private Text timer;
 
     private boolean prevFired = false;
 
@@ -75,10 +79,16 @@ public class GameScene extends Application
         p1Score = new Text(50, 50, "K: 0 \nD: 0");
         p1Score.setScaleX(2.0);
         p1Score.setScaleY(2.0);
+
         p2Score = new Text(primaryStage.getWidth() - 75, 50, "K: 0 \nD: 0");
         p2Score.setScaleX(2.0);
         p2Score.setScaleY(2.0);
         p2Score.setFill(Color.RED);
+
+        timer = new Text(primaryStage.getWidth() / 2.0, 50, "60");
+        timer.setScaleX(3.0);
+        timer.setScaleY(3.0);
+        timer.setFill(Color.GREEN);
 
 
         try
@@ -133,6 +143,7 @@ public class GameScene extends Application
 
         pane.getChildren().add(p1Score);
         pane.getChildren().add(p2Score);
+        pane.getChildren().add(timer);
 
         //Initializing players
         if(playerNum == 1)
@@ -171,8 +182,21 @@ public class GameScene extends Application
             while(true)
             {
                 try {
+                    timeFromServer = fromServer.readInt();
+                    timer.setText("" + timeFromServer);
+
+                    if((timeFromServer <= 30) && timer.getFill() == Color.GREEN )
+                        timer.setFill(Color.ORANGE);
+
+                    
+                    if((timeFromServer <= 15) && timer.getFill() == Color.ORANGE )
+                        timer.setFill(Color.RED);
+                        
+                    if(timeFromServer <= 0)
+                        break;
+
                     //This is where we read data from the server
-                    String serverIn = fromServer.readUTF();
+                    serverIn = fromServer.readUTF();
                     HandleServerInput(serverIn);
 
                     //Doing operations in JavaFX thread, because we are adjusting nodes
@@ -201,20 +225,14 @@ public class GameScene extends Application
                                         players.get(i).Respawn(100.0 + 400.0*i, 100.0 + 400.0*i);
                                         deaths.setElementAt(deaths.get(i)+1, i);                                  
 
-
-                                        System.out.println(i+1 + " died " + deaths.get(i) + " times."); //Debugging comment to remove later
-
                                         if (i == 0)
                                         {
                                           kills.setElementAt(kills.get(1)+1, 1);
-                                          System.out.println(2 + " killed " + kills.get(1) + " times."); //Debugging comment to remove later
                                         }
 
                                         else if (i == 1)
                                         {
                                           kills.setElementAt(kills.get(0)+1, 0);
-
-                                          System.out.println(1 + " killed " + kills.get(0) + " times."); //Debugging comment to remove later
                                         }
 
                                         p1Score.setText("K: " + kills.get(0) + " \nD: " + deaths.get(0));
@@ -243,6 +261,10 @@ public class GameScene extends Application
                     System.err.println(ex);
                   }
             }
+
+            /*
+            Insert highscore stuff here
+            */
         });
 
         thread.setDaemon(true);
@@ -436,9 +458,6 @@ public class GameScene extends Application
     }
 
     public void load() {
-
-
-
         try {
             Scanner in = new Scanner(new File(currentFileName));
             int i = 0;
