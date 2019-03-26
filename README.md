@@ -7,6 +7,8 @@
 - You will need to run a server first! This means you will need three running instances of the game: a running server, and then two clients. 
 - By default, the client will connect to localhost.
 
+### Contributors
+
 Matthew Demoe
 - Built the networking system.
 - Built most of the game.
