@@ -74,7 +74,7 @@ public class ScoreScene extends Application {
         	e.printStackTrace();
         }
 
-        Collections.sort(scores, Comparator.comparing(str -> str.getKey()));
+        Collections.sort(scores, Comparator.comparing(str -> Integer.valueOf(str.getKey())));
 
         for(int i = scores.size()-1;i >= Math.max(0, scores.size()-maxScoreDisplay);i--) {
         	Text p1Score = new Text(scores.get(i).getKey());
