@@ -29,6 +29,12 @@ import java.util.Scanner;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * This class displays the actual Teen Galaga game, as well as its end screen.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public class GameScene extends Application
 {
     // IO streams
@@ -74,7 +80,6 @@ public class GameScene extends Application
         serverIP = ip;
     }
 
-    @Override
     public void start(Stage primaryStage)
     {
         Font gameFont = Font.loadFont(getClass().getResourceAsStream("/fonts/OCR A Std Regular.ttf"), 12);
@@ -123,18 +128,18 @@ public class GameScene extends Application
             {
                 p1Score.setFill(Color.RED);
                 p2Score.setFill(Color.LIGHTSEAGREEN);
-
             }        
 
           }
           catch (IOException ex)
-          {
-          }
+          {}
 
         Random rand = new Random();
         Pane pane = new Pane();
         pane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
+        //Randomly generates star background using rectangles
+        //Randomized: position (x/y), alpha(0.0-1.0)
         for(int i = 0;i < 200;i++) {
             Rectangle r = new Rectangle(rand.nextInt(796)+2, rand.nextInt(596)+2, 2, 2);
             r.setFill(Color.rgb(255, 255, 255, rand.nextFloat()));
@@ -169,6 +174,7 @@ public class GameScene extends Application
             player.SetColor(Color.RED);
             player2.SetColor(Color.LIGHTSEAGREEN);
         }
+        //P2 starts facing P1
         player2.Rotate(180.0);
 
         players.add(player);
@@ -247,10 +253,7 @@ public class GameScene extends Application
                                         }
 
                                         p1Score.setText("K: " + kills.get(0) + " \nD: " + deaths.get(0));
-
                                         p2Score.setText("K: " + kills.get(1) + " \nD: " + deaths.get(1));
-
-
                                         break;
                                     }
                                 }
@@ -262,8 +265,6 @@ public class GameScene extends Application
                         {
                             players.get(i).Update();
                         }
-
-
                     });
 
                   }
@@ -272,7 +273,7 @@ public class GameScene extends Application
                     System.err.println(ex);
                   }
             }
-
+            //End of game, displays end screen and saves score
             save();
             Platform.runLater(() -> {
                 primaryStage.setScene(getEndScene(kills.get(0), kills.get(1), playerNum));
@@ -438,8 +439,11 @@ public class GameScene extends Application
             }
         }});
     }
-
- public void save() {
+ 
+    /**
+    * Saves score to file, in format "userScore,opponentScore"
+    */
+    public void save() {
         File f = new File(currentFileName);
         try {
             FileOutputStream out = new FileOutputStream(f, true);
@@ -456,6 +460,13 @@ public class GameScene extends Application
         }
     }
 
+    /**
+     * Returns a Win, Loss, or Tie screen to display on game end
+     * @param p1Kills Player 1's total kills
+     * @param p2Kills Player 2's total kills
+     * @param activePlayer Whether the client is running on player 1's side or player 2's side (1/2)
+     * @return The end screen Scene to display
+     */
     public Scene getEndScene(int p1Kills, int p2Kills, int activePlayer) {
 
         //Make sure p1 is active user
@@ -465,6 +476,7 @@ public class GameScene extends Application
           p2Kills = buf;
         }
 
+        //Overall vbox
         VBox endVBox = new VBox(20);
         endVBox.setAlignment(Pos.CENTER);
         endVBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));

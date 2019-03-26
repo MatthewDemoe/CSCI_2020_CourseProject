@@ -3,7 +3,12 @@ package CSCI.Final.Project;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
-//Projectiles that the player shoots 
+/**
+ * This class models a projectile in Teen Galaga, modeled off of GameObject.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public class Projectile extends GameObject
 {
     //playerNum is the player who shot the projectile
@@ -32,7 +37,6 @@ public class Projectile extends GameObject
         playerNum = num;
     }
 
-    @Override
     public void Update()
     {
         //Move the projectile every update. I should be doing this based on dt...

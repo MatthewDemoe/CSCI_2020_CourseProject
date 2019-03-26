@@ -24,12 +24,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * This class displays top matches played, based off of player one's highest scores.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public class ScoreScene extends Application {
 
+	//Only show n scores on high score display
 	private double maxScoreDisplay = 7;
 
 	public void start(Stage primaryStage) {
 
+		//Main pane
 		VBox p = new VBox(20);
 		p.setAlignment(Pos.TOP_CENTER);
 		p.setPadding(new Insets(20, 20, 20, 20));
@@ -60,13 +68,14 @@ public class ScoreScene extends Application {
         p1VBox.getChildren().add(p1Text);
         p2VBox.getChildren().add(p2Text);
 
+        //Stores all scores read from file
         ArrayList<Pair<String, String>> scores = new ArrayList<Pair<String, String>>();
 
         try {
         	Scanner in = new Scanner(new File("src/main/resources/saves/saves.dat"));
 	        while(in.hasNextLine()) {
 	        	String[] str = in.nextLine().split(",");
-	        	if(str.length != 2) break;
+	        	if(str.length != 2) break; //Invalid format
 
 	        	scores.add(new Pair<String, String>(str[0], str[1]));
 	        }
@@ -74,8 +83,10 @@ public class ScoreScene extends Application {
         	e.printStackTrace();
         }
 
+        //Sort by player one's highest scores 
         Collections.sort(scores, Comparator.comparing(str -> Integer.valueOf(str.getKey())));
 
+        //Either display maxScoreDisplay scores, or all scores if there are less scores than the maxScoreDisplay limit
         for(int i = scores.size()-1;i >= Math.max(0, scores.size()-maxScoreDisplay);i--) {
         	Text p1Score = new Text(scores.get(i).getKey());
 			p1Score.setFont(playerFont);
@@ -88,6 +99,7 @@ public class ScoreScene extends Application {
 		    p1VBox.getChildren().add(p1Score);
 		    p2VBox.getChildren().add(p2Score);
         }
+        
         HBox playerScores = new HBox(100);
 	    playerScores.setAlignment(Pos.TOP_CENTER);
 	    playerScores.getChildren().addAll(p1VBox, p2VBox);

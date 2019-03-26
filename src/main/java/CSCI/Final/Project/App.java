@@ -22,9 +22,15 @@ import java.awt.Toolkit;
 import javafx.scene.control.TextField;
 import java.io.File;
 
+/**
+ * This class displays the main menu for Teen Galaga via JavaFX, and displays other menus as necessary.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public class App extends Application 
 {
-    @Override
+
     public void start(Stage primaryStage)
     {
         GridPane pane = new GridPane();
@@ -98,6 +104,11 @@ public class App extends Application
         primaryStage.show(); // Display the stage
     }
     
+    /**
+     * This method formats buttons to follow Teen Galaga's menu theme.
+     * The font colour and size change, and colour gets modified on item hover.
+     * @param bts One or more buttons to format for the main menu
+     */
     public void formatButtons(Button... bts) {
         Font buttonFont = Font.loadFont(getClass().getResourceAsStream("/fonts/emulogic.ttf"), 20);
 
@@ -122,12 +133,10 @@ public class App extends Application
             bt.setOnMouseEntered(btHoverHandler);
             bt.setOnMouseExited(btReleaseHandler);
         }
-
     }
 
     public static void main(String[] args) 
     {
         launch(args);
-
     }
 }

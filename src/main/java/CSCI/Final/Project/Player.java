@@ -5,7 +5,12 @@ import javafx.scene.shape.Line;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
-
+/**
+ * This class models a player in Teen Galaga, based off of GameObject.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public class Player extends GameObject
 {
     Line topLeft;
@@ -62,7 +67,6 @@ public class Player extends GameObject
         _velocity = new Vec2(0.0, 0.0);
     }
 
-    @Override
     public void Update()
     {
         //Accelerate in the direction of the forward vector

@@ -2,8 +2,12 @@ package CSCI.Final.Project;
 
 import java.lang.Math;
 
-//2D Vector used for math.
-//Googled it and it didn't seem like java had one 
+/**
+ * This 2D vector class is used for Teen Galaga's player movement.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public class Vec2
 {
     public double x;

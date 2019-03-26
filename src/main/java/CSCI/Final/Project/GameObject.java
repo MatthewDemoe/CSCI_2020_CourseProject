@@ -8,7 +8,12 @@ import javafx.scene.shape.Rectangle;
 import java.util.Vector;
 import javafx.scene.paint.Color;
 
-//Base class for all game objects
+/**
+ * This is the base class for all game objects in Teen Galaga.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public abstract class GameObject
 {
     GameObject(Double x, Double y, Pane pane)
@@ -59,7 +64,6 @@ public abstract class GameObject
     {
         return size;
     }
-
 
     public void SetColor(Color c)
     {

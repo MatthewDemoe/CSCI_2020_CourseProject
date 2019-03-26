@@ -12,6 +12,12 @@ import javafx.stage.Stage;
 import java.util.Vector;
 import java.time.*;
 
+/**
+ * This class runs and displays the server for two clients to connect to.
+ * @author Matthew Demoe
+ * @author Geerthan Srikantharajah
+ * @author Gage Adam
+ */
 public class Server extends Application {
     
     public Server()
