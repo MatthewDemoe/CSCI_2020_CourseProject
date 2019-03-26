@@ -1,4 +1,4 @@
-package main.java.CSCI.Final.Poject;
+package CSCI.Final.Project;
 
 import java.io.*;
 import java.net.*;

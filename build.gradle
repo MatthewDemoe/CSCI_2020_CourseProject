@@ -29,7 +29,7 @@ dependencies {
 }
 
 // Define the main class for the application
-mainClassName = 'CSCI.Final.Poject.App'
+mainClassName = 'CSCI.Final.Project.App'
 
 test {
     // Use TestNG for unit tests

@@ -1,4 +1,4 @@
-package main.java.CSCI.Final.Poject;
+package CSCI.Final.Project;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -28,8 +28,6 @@ import java.util.Scanner;
 
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-
-import main.java.CSCI.Final.Poject.Player;
 
 public class GameScene extends Application
 {
