@@ -15,7 +15,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.HPos;
 
+import javafx.util.Pair;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class ScoreScene extends Application {
+
+	private double maxScoreDisplay = 7;
 
 	public void start(Stage primaryStage) {
 
@@ -30,10 +41,13 @@ public class ScoreScene extends Application {
         titleText.setFont(titleFont);
         titleText.setFill(Color.RED);
 
-        HBox playerNames = new HBox(100);
-        playerNames.setAlignment(Pos.TOP_CENTER);
-
         Font playerFont = Font.loadFont(getClass().getResourceAsStream("/fonts/emulogic.ttf"), 22);
+
+        VBox p1VBox = new VBox(20);
+        p1VBox.setAlignment(Pos.TOP_CENTER);
+
+        VBox p2VBox = new VBox(20);
+        p2VBox.setAlignment(Pos.TOP_CENTER);
 
         Text p1Text = new Text("Player 1");
         p1Text.setFont(playerFont);
@@ -43,9 +57,42 @@ public class ScoreScene extends Application {
         p2Text.setFont(playerFont);
         p2Text.setFill(Color.LIGHTSEAGREEN);
 
-        playerNames.getChildren().addAll(p1Text, p2Text);
+        p1VBox.getChildren().add(p1Text);
+        p2VBox.getChildren().add(p2Text);
 
-		p.getChildren().addAll(titleText, playerNames);
+        ArrayList<Pair<String, String>> scores = new ArrayList<Pair<String, String>>();
+
+        try {
+        	Scanner in = new Scanner(new File("src/main/resources/saves/saves.dat"));
+	        while(in.hasNextLine()) {
+	        	String[] str = in.nextLine().split(",");
+	        	if(str.length != 2) break;
+
+	        	scores.add(new Pair<String, String>(str[0], str[1]));
+	        }
+        } catch (FileNotFoundException e) {
+        	e.printStackTrace();
+        }
+
+        Collections.sort(scores, Comparator.comparing(str -> str.getKey()));
+
+        for(int i = scores.size()-1;i >= Math.max(0, scores.size()-maxScoreDisplay);i--) {
+        	Text p1Score = new Text(scores.get(i).getKey());
+			p1Score.setFont(playerFont);
+			p1Score.setFill(Color.GRAY);
+
+		    Text p2Score = new Text(scores.get(i).getValue());
+		    p2Score.setFont(playerFont);
+			p2Score.setFill(Color.GRAY);
+
+		    p1VBox.getChildren().add(p1Score);
+		    p2VBox.getChildren().add(p2Score);
+        }
+        HBox playerScores = new HBox(100);
+	    playerScores.setAlignment(Pos.TOP_CENTER);
+	    playerScores.getChildren().addAll(p1VBox, p2VBox);
+
+        p.getChildren().addAll(titleText, playerScores);	
 
 		Scene s = new Scene(p, 800, 600);
 		primaryStage.setScene(s);

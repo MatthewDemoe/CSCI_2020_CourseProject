@@ -63,8 +63,8 @@ public class GameScene extends Application
 
     public GameScene()
     {
-        highScores = new int[5][5];
-        currentFileName = "saves.dat";
+        //highScores = new int[5][5];
+        currentFileName = "src/main/resources/saves/saves.dat";
     }
 
     public void SetIP(String ip)
@@ -192,7 +192,7 @@ public class GameScene extends Application
                     if((timeFromServer <= 15) && timer.getFill() == Color.ORANGE )
                         timer.setFill(Color.RED);
                         
-                    if(timeFromServer <= 0)
+                    if(timeFromServer <= 0) 
                         break;
 
                     //This is where we read data from the server
@@ -265,9 +265,8 @@ public class GameScene extends Application
                   }
             }
 
-            /*
-            Insert highscore stuff here
-            */
+            save();
+
         });
 
         thread.setDaemon(true);
@@ -431,12 +430,11 @@ public class GameScene extends Application
 
  public void save() {
         File f = new File(currentFileName);
-
         try {
+            FileOutputStream out = new FileOutputStream(f, true);
+            PrintWriter p = new PrintWriter(out);
 
-            PrintWriter p = new PrintWriter(f);
-
-            for(int i = 0;i < highScores.length;i++) {
+            /*for(int i = 0;i < highScores.length;i++) {
               if (kills.get(whoWon) >= highScores[i][0])
               {
                 if (deaths.get(whoWon) <= highScores[i][1])
@@ -451,16 +449,20 @@ public class GameScene extends Application
                 }
               }
                 p.println(kills.get(whoWon) + "," + deaths.get(whoWon));
-            }
+            }*/
+
+            if(playerNum == 1) p.println(kills.get(1) + "," + kills.get(0));
+            else p.println(kills.get(0) + "," + kills.get(1));
 
             p.flush();
+            p.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public void load() {
+    /*public void load() {
         try {
             Scanner in = new Scanner(new File(currentFileName));
             int i = 0;
@@ -476,5 +478,5 @@ public class GameScene extends Application
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
