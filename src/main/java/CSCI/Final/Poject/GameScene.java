@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -23,6 +25,8 @@ import java.util.Vector;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import main.java.CSCI.Final.Poject.Player;
@@ -75,17 +79,21 @@ public class GameScene extends Application
     @Override
     public void start(Stage primaryStage)
     {
+        Font gameFont = Font.loadFont(getClass().getResourceAsStream("/fonts/OCR A Std Regular.ttf"), 12);
 
         p1Score = new Text(50, 50, "K: 0 \nD: 0");
+        p1Score.setFont(gameFont);
         p1Score.setScaleX(2.0);
         p1Score.setScaleY(2.0);
 
         p2Score = new Text(primaryStage.getWidth() - 75, 50, "K: 0 \nD: 0");
+        p2Score.setFont(gameFont);
         p2Score.setScaleX(2.0);
         p2Score.setScaleY(2.0);
         p2Score.setFill(Color.RED);
 
         timer = new Text(primaryStage.getWidth() / 2.0, 50, "60");
+        timer.setFont(gameFont);
         timer.setScaleX(3.0);
         timer.setScaleY(3.0);
         timer.setFill(Color.GREEN);
@@ -220,8 +228,10 @@ public class GameScene extends Application
                                     //Check if any projectiles are colliding with a player who's number is not the same as the projectile's
                                     if(projectiles.get(j).CheckCollision(players.get(i)))
                                     {
-                                        //if the projectile is colliding, then delete it
-                                        projectiles.removeElementAt(j);
+                                        //if the projectile is colliding, then delete all projectiles
+                                        for(int k = 0;k < projectiles.size();k++)
+                                          projectiles.get(k).deleteThis();
+                                        projectiles.clear();
                                         for(int k = 0;k < players.size();k++) {
                                           players.get(k).Respawn(100.0 + 400.0*k, 100.0 + 400.0*k);
                                           players.get(k).Rotate(180.0*k);
@@ -266,6 +276,9 @@ public class GameScene extends Application
             }
 
             save();
+            Platform.runLater(() -> {
+                primaryStage.setScene(getEndScene(kills.get(0), kills.get(1), playerNum));
+            });
 
         });
 
@@ -434,23 +447,6 @@ public class GameScene extends Application
             FileOutputStream out = new FileOutputStream(f, true);
             PrintWriter p = new PrintWriter(out);
 
-            /*for(int i = 0;i < highScores.length;i++) {
-              if (kills.get(whoWon) >= highScores[i][0])
-              {
-                if (deaths.get(whoWon) <= highScores[i][1])
-                {
-                  if (i + 1 < 5)
-                  {
-                    highScores[i+1][0] = highScores[i][0];
-                    highScores[i+1][1] = highScores[i][1];
-                  }
-                  highScores[i][0] = kills.get(whoWon);
-                  highScores[i][1] = deaths.get(whoWon);
-                }
-              }
-                p.println(kills.get(whoWon) + "," + deaths.get(whoWon));
-            }*/
-
             if(playerNum == 1) p.println(kills.get(1) + "," + kills.get(0));
             else p.println(kills.get(0) + "," + kills.get(1));
 
@@ -462,21 +458,55 @@ public class GameScene extends Application
         }
     }
 
-    /*public void load() {
-        try {
-            Scanner in = new Scanner(new File(currentFileName));
-            int i = 0;
-            while(in.hasNextLine()) {
-                String[] str = in.nextLine().split(",");
-                highScores[i][0] = Integer.valueOf(str[0]);
-                highScores[i][1] = Integer.valueOf(str[1]);
-                i++;
-            }
+    public Scene getEndScene(int p1Kills, int p2Kills, int activePlayer) {
 
-            in.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        //Make sure p1 is active user
+        if(activePlayer != 1) {
+          int buf = p1Kills;
+          p1Kills = p2Kills;
+          p2Kills = buf;
         }
-    }*/
+
+        VBox endVBox = new VBox(20);
+        endVBox.setAlignment(Pos.CENTER);
+        endVBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+
+        Font endFont = Font.loadFont(getClass().getResourceAsStream("/fonts/emulogic.ttf"), 40);
+        Font endScoreFont = Font.loadFont(getClass().getResourceAsStream("/fonts/emulogic.ttf"), 40);
+
+        Text endText = new Text();
+        endText.setFont(endFont);
+
+        if(p1Kills < p2Kills) {
+            endText.setFill(Color.RED);
+            endText.setText("You lose");
+        }
+        else if(p1Kills > p2Kills) {
+          endText.setFill(Color.LIGHTSEAGREEN);
+          endText.setText("You win!");
+        }
+        else {
+          endText.setFill(Color.GRAY);
+          endText.setText("Tie game");
+        }
+
+        HBox scoreHBox = new HBox(80);
+        scoreHBox.setAlignment(Pos.CENTER);
+
+        Text p1KillTxt = new Text(String.valueOf(p1Kills));
+        p1KillTxt.setFont(endScoreFont);
+        p1KillTxt.setFill(Color.GRAY);
+
+        Text p2KillTxt = new Text(String.valueOf(p2Kills));
+        p2KillTxt.setFont(endScoreFont);
+        p2KillTxt.setFill(Color.GRAY);
+
+        scoreHBox.getChildren().addAll(p1KillTxt, p2KillTxt);
+
+        endVBox.getChildren().addAll(endText, scoreHBox);
+
+        Scene s = new Scene(endVBox, 800, 600);
+        return s;
+
+    }
 }
