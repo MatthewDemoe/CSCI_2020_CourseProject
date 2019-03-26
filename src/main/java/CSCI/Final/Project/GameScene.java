@@ -116,11 +116,10 @@ public class GameScene extends Application
 
               //When you connect to the server, it will send you an int representing which player you are
               playerNum = fromServer.readInt();
-              System.out.println(playerNum);
       
               if(playerNum == 1)
               {
-                  p1Score.setFill(Color.LIGHTSEAGREEN);
+                p1Score.setFill(Color.LIGHTSEAGREEN);
                 p2Score.setFill(Color.RED);
               }
             
@@ -449,7 +448,7 @@ public class GameScene extends Application
             FileOutputStream out = new FileOutputStream(f, true);
             PrintWriter p = new PrintWriter(out);
 
-            if(playerNum == 1) p.println(kills.get(1) + "," + kills.get(0));
+            if(playerNum != 1) p.println(kills.get(1) + "," + kills.get(0));
             else p.println(kills.get(0) + "," + kills.get(1));
 
             p.flush();
